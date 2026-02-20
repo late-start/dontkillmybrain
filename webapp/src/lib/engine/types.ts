@@ -4,7 +4,9 @@ export type Signal =
   | "contribution"
   | "evaluation"
   | "passive_acceptance"
-  | "delegation";
+  | "delegation"
+  | "capitulation"
+  | "unknown";
 
 export interface Turn {
   role: "human" | "ai";

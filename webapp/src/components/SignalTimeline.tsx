@@ -15,6 +15,8 @@ const signalColors: Record<Signal, string> = {
   evaluation: "var(--color-evaluation)",
   passive_acceptance: "var(--color-passive)",
   delegation: "var(--color-delegation)",
+  capitulation: "var(--color-capitulation)",
+  unknown: "var(--color-unknown)",
 };
 
 const signalLabels: Record<Signal, string> = {
@@ -24,6 +26,8 @@ const signalLabels: Record<Signal, string> = {
   evaluation: "Evaluation",
   passive_acceptance: "Passive",
   delegation: "Delegation",
+  capitulation: "Capitulation",
+  unknown: "Unknown",
 };
 
 interface Props {

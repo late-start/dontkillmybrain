@@ -1,0 +1,11 @@
+webapp/node_modules
+webapp/.next
+webapp/.env
+webapp/.env.local
+extension/
+research/
+evaluation.md
+*.md
+!prompts/*.md
+!webapp/package.json
+!webapp/package-lock.json

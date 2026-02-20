@@ -1,19 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { Turn, TurnClassification, Signal } from "@/lib/engine/types";
-
-const SYSTEM_PROMPT = `You are an expert at analyzing human cognitive engagement in human-AI conversations.
-
-Given a pair of messages (an AI message followed by a human response), classify the human's cognitive engagement into exactly ONE of these signals:
-
-- **steering**: The human is deciding direction — introducing goals, constraints, or redirecting the conversation. They are shaping what happens next.
-- **friction**: The human is pushing back — questioning, rejecting, challenging, or raising the bar. They disagree or want better.
-- **contribution**: The human is bringing something the AI doesn't have — domain knowledge, personal experience, context, taste, or judgment that only they possess.
-- **evaluation**: The human is assessing the AI's output — probing, verifying, modifying, or testing what the AI produced. They are actively checking quality.
-- **passive_acceptance**: The human is accepting without meaningful engagement — short acknowledgments like "ok", "thanks", "got it", moving on without evaluation.
-- **delegation**: The human is asking the AI to make judgments or decisions for them — offloading thinking, asking "what should I do?", or letting the AI choose.
-
-Respond with ONLY a JSON object in this exact format (no markdown, no code fences):
-{"signal": "<one of the 6 signals>", "confidence": <0.0 to 1.0>, "rationale": "<brief explanation>"}`;
+import { CLASSIFIER_PROMPT } from "@/lib/engine/prompts";
 
 const VALID_SIGNALS: Signal[] = [
   "steering",
@@ -22,6 +9,7 @@ const VALID_SIGNALS: Signal[] = [
   "evaluation",
   "passive_acceptance",
   "delegation",
+  "capitulation",
 ];
 
 async function classifySingleTurn(
@@ -43,7 +31,7 @@ async function classifySingleTurn(
     const response = await client.messages.create({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 256,
-      system: SYSTEM_PROMPT,
+      system: CLASSIFIER_PROMPT,
       messages,
     });
 
@@ -60,7 +48,7 @@ async function classifySingleTurn(
 
     const signal: Signal = VALID_SIGNALS.includes(parsed.signal)
       ? parsed.signal
-      : "passive_acceptance";
+      : "unknown";
 
     const confidence =
       typeof parsed.confidence === "number"
@@ -81,7 +69,7 @@ async function classifySingleTurn(
   } catch (error) {
     return {
       turnIndex: humanTurn.index,
-      signal: "passive_acceptance",
+      signal: "unknown",
       confidence: 0,
       rationale: `Classification failed: ${error instanceof Error ? error.message : "unknown error"}`,
     };
