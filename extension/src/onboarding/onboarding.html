@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>dontkillmybrain - Setup</title>
+  <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>dontkillmybrain</h1>
+      <p class="subtitle">Are you thinking, or is AI thinking for you?</p>
+    </header>
+
+    <section class="intro">
+      <p>
+        This extension quietly monitors your AI conversations and shows you
+        how you're engaging cognitively. It helps you stay aware of when
+        you're thinking critically versus passively accepting what AI gives you.
+      </p>
+    </section>
+
+    <section class="indicator-guide">
+      <h2>The Ambient Indicator</h2>
+      <p>A small colored badge on the extension icon tells you how you're doing in real time:</p>
+      <div class="indicator-list">
+        <div class="indicator-item">
+          <span class="dot engaged"></span>
+          <div>
+            <strong>Green &mdash; Engaged</strong>
+            <p>You're steering the conversation, asking specific questions, pushing back, and contributing your own ideas.</p>
+          </div>
+        </div>
+        <div class="indicator-item">
+          <span class="dot coasting"></span>
+          <div>
+            <strong>Amber &mdash; Coasting</strong>
+            <p>You're following along and making additions, but not deeply directing the conversation.</p>
+          </div>
+        </div>
+        <div class="indicator-item">
+          <span class="dot passive"></span>
+          <div>
+            <strong>Red &mdash; Passive</strong>
+            <p>You're mostly accepting AI output without critical evaluation. Short replies like "ok" or "sounds good" dominate.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="setup">
+      <h2>Setup (Optional)</h2>
+      <p>
+        The extension works out of the box with local heuristics. For deeper AI-powered
+        analysis of your conversations, you can connect it to the dontkillmybrain web app.
+      </p>
+
+      <div class="form-group">
+        <label for="api-key">API Key</label>
+        <input
+          type="text"
+          id="api-key"
+          placeholder="sk-ant-..."
+          autocomplete="off"
+        >
+        <p class="form-hint">
+          Optional. Needed for AI-powered conversation analysis. Get one from your
+          dontkillmybrain dashboard.
+        </p>
+        <p id="api-key-error" class="form-error" style="display:none"></p>
+      </div>
+
+      <div class="form-group">
+        <label for="web-app-url">Web App URL</label>
+        <input
+          type="url"
+          id="web-app-url"
+          placeholder="http://localhost:3000"
+          value="http://localhost:3000"
+        >
+        <p class="form-hint">
+          The URL of your dontkillmybrain web app instance.
+        </p>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label>
+          <input type="checkbox" id="auto-save">
+          Automatically save analyses to my account
+        </label>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="save-btn">Got it, let's go</button>
+    </div>
+
+    <footer>
+      <p>You can change these settings anytime from the extension popup.</p>
+    </footer>
+  </div>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>
