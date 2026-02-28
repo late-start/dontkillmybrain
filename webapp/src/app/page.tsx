@@ -1,4 +1,5 @@
 import AnalysisInput from "@/components/AnalysisInput";
+import SampleReport from "@/components/SampleReport";
 
 export default function Home() {
   return (
@@ -78,48 +79,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sample report preview */}
+      {/* Sample report */}
       <section className="border-t border-[var(--color-border)] py-16">
         <h2 className="mb-8 text-xs font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
           Sample report
         </h2>
-
-        <div className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] p-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="rounded bg-[var(--color-bg)] px-2 py-0.5 text-xs text-[var(--color-text-muted)] border border-[var(--color-border)]">
-              Claude
-            </span>
-            <span className="text-xs text-[var(--color-text-muted)]">
-              12 human messages
-            </span>
-          </div>
-
-          <h3 className="text-lg font-semibold text-[var(--color-text)]">
-            Debugging a React state management issue
-          </h3>
-
-          <p className="text-sm leading-[1.7] text-[var(--color-text-secondary)]">
-            You started strong &mdash; you described the bug precisely and
-            proposed a hypothesis about stale closures. But midway through, when
-            Claude suggested refactoring to useReducer, you accepted without
-            evaluating whether it actually addressed your root cause...
-          </p>
-
-          {/* Mini signal bar */}
-          <div className="flex h-5 w-full gap-px overflow-hidden rounded">
-            <div className="flex-[3]" style={{ backgroundColor: "var(--color-steering)" }} />
-            <div className="flex-[2]" style={{ backgroundColor: "var(--color-contribution)" }} />
-            <div className="flex-[1]" style={{ backgroundColor: "var(--color-friction)" }} />
-            <div className="flex-[2]" style={{ backgroundColor: "var(--color-passive)" }} />
-            <div className="flex-[1]" style={{ backgroundColor: "var(--color-evaluation)" }} />
-            <div className="flex-[3]" style={{ backgroundColor: "var(--color-delegation)" }} />
-          </div>
-
-          <p className="text-sm italic text-[var(--color-text-muted)]">
-            &ldquo;Next time you hit a wall, try explaining why you disagree
-            before asking for alternatives.&rdquo;
-          </p>
-        </div>
+        <SampleReport />
       </section>
 
       {/* Footer spacer */}

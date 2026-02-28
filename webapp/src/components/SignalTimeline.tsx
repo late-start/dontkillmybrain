@@ -34,12 +34,14 @@ interface Props {
   signals: TurnClassification[];
   turns?: Turn[];
   highlights?: HighlightedMoment[];
+  totalExpected?: number;
 }
 
-export default function SignalTimeline({ signals, turns, highlights }: Props) {
+export default function SignalTimeline({ signals, turns, highlights, totalExpected }: Props) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-  if (signals.length === 0) return null;
+  const totalSlots = totalExpected || signals.length;
+  if (totalSlots === 0) return null;
 
   const highlightedTurnIndices = new Set(
     (highlights || []).map((h) => h.turnIndex)
@@ -85,7 +87,25 @@ export default function SignalTimeline({ signals, turns, highlights }: Props) {
 
       {/* Timeline bar */}
       <div className="relative flex h-10 w-full gap-px overflow-hidden rounded">
-        {signals.map((signal, i) => {
+        {Array.from({ length: totalSlots }).map((_, i) => {
+          const signal = signals[i];
+
+          if (!signal) {
+            // Empty placeholder slot — not yet classified
+            return (
+              <div
+                key={`pending-${i}`}
+                className="transition-all"
+                style={{
+                  backgroundColor: "var(--color-border)",
+                  flex: `1 1 ${Math.max(100 / totalSlots, 8)}%`,
+                  minWidth: "16px",
+                  opacity: 0.3,
+                }}
+              />
+            );
+          }
+
           const isHighlighted = highlightedTurnIndices.has(signal.turnIndex);
           const isExpanded = expandedIndex === i;
 
@@ -95,7 +115,7 @@ export default function SignalTimeline({ signals, turns, highlights }: Props) {
               className="relative transition-all cursor-pointer"
               style={{
                 backgroundColor: signalColors[signal.signal],
-                flex: `1 1 ${Math.max(100 / signals.length, 8)}%`,
+                flex: `1 1 ${Math.max(100 / totalSlots, 8)}%`,
                 minWidth: "16px",
                 opacity: expandedIndex !== null && !isExpanded ? 0.4 : 1,
               }}

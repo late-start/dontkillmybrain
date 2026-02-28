@@ -24,7 +24,7 @@ export async function scrapeConversationPage(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
     );
 
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 30000 });
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 120000 });
 
     // Wait for conversation content
     const waitSelector =
@@ -34,7 +34,7 @@ export async function scrapeConversationPage(
           ? "[data-message-author-role]"
           : platform === "grok"
             ? '[class*="message"]'
-            : '[class*="response"]';
+            : "response-container";
 
     try {
       await page.waitForSelector(waitSelector, { timeout: 10000 });
@@ -151,20 +151,37 @@ function extractGemini(): ScrapedConversation {
     title: document.title || undefined,
   };
 
-  const queries = document.querySelectorAll(
-    '[class*="query"], [class*="user-message"], [class*="request"]'
-  );
-  const responses = document.querySelectorAll(
-    '[class*="response"], [class*="model-response"], [class*="answer"]'
-  );
-  const len = Math.max(queries.length, responses.length);
-  for (let i = 0; i < len; i++) {
-    if (i < queries.length) {
-      const text = queries[i].textContent?.trim();
+  // Strategy 1: Gemini uses custom HTML elements for turns
+  const queries = document.querySelectorAll("user-query-content");
+  const responses = document.querySelectorAll("response-container");
+
+  if (queries.length > 0 || responses.length > 0) {
+    const len = Math.max(queries.length, responses.length);
+    for (let i = 0; i < len; i++) {
+      if (i < queries.length) {
+        const text = queries[i].textContent?.replace(/^You said\s*/, "").trim();
+        if (text) conv.turns.push({ role: "human", content: text });
+      }
+      if (i < responses.length) {
+        const text = responses[i].textContent?.trim();
+        if (text) conv.turns.push({ role: "ai", content: text });
+      }
+    }
+    if (conv.turns.length >= 2) return conv;
+  }
+
+  // Strategy 2: Fallback to class-based matching with deduplication
+  conv.turns = [];
+  const queryEls = document.querySelectorAll(".query-text");
+  const responseEls = document.querySelectorAll("model-response");
+  const len2 = Math.max(queryEls.length, responseEls.length);
+  for (let i = 0; i < len2; i++) {
+    if (i < queryEls.length) {
+      const text = queryEls[i].textContent?.trim();
       if (text) conv.turns.push({ role: "human", content: text });
     }
-    if (i < responses.length) {
-      const text = responses[i].textContent?.trim();
+    if (i < responseEls.length) {
+      const text = responseEls[i].textContent?.trim();
       if (text) conv.turns.push({ role: "ai", content: text });
     }
   }

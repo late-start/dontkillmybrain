@@ -4,22 +4,25 @@ import { generateNarrative } from "@/lib/engine/narrator";
 
 export async function analyzeTranscript(
   transcript: Transcript,
-  apiKey?: string
 ): Promise<AnalysisResult> {
-  const resolvedKey = apiKey || process.env.ANTHROPIC_API_KEY;
-
-  if (!resolvedKey) {
-    throw new Error(
-      "No API key provided. Pass an API key or set ANTHROPIC_API_KEY environment variable."
-    );
+  // Classifier uses OpenAI (gpt-5.2 with flex processing)
+  const openaiKey = process.env.OPENAI_API_KEY;
+  if (!openaiKey) {
+    throw new Error("OPENAI_API_KEY not configured.");
   }
 
-  // Stage 1: Classify each human turn
-  const turnSignals = await classifyTurns(transcript.turns, resolvedKey);
+  // Narrator uses Anthropic
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  if (!anthropicKey) {
+    throw new Error("ANTHROPIC_API_KEY not configured.");
+  }
 
-  // Stage 2: Generate narrative, highlights, and nudge
+  // Stage 1: Classify each human turn (OpenAI gpt-5.2 flex)
+  const turnSignals = await classifyTurns(transcript.turns, openaiKey);
+
+  // Stage 2: Generate narrative, highlights, and nudge (Anthropic)
   const { sessionTitle, introNarrative, narrative, highlights, nudge } =
-    await generateNarrative(transcript.turns, turnSignals, resolvedKey);
+    await generateNarrative(transcript.turns, turnSignals, anthropicKey);
 
   const humanTurnCount = transcript.turns.filter(
     (t) => t.role === "human"
